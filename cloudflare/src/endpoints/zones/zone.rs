@@ -50,13 +50,31 @@ impl EndpointSpec for ZoneDetails<'_> {
     }
 }
 
+/// Zone Activation Check
+/// <https://developers.cloudflare.com/api/resources/zones/subresources/activation_check/>
+#[derive(Debug)]
+pub struct ZoneActivationCheck<'a> {
+    pub identifier: &'a str,
+}
+impl EndpointSpec for ZoneActivationCheck<'_> {
+    type JsonResponse = Option<ZoneIdentifier>;
+    type ResponseType = ApiSuccess<Self::JsonResponse>;
+
+    fn method(&self) -> Method {
+        Method::PUT
+    }
+    fn path(&self) -> String {
+        format!("zones/{}/activation_check", self.identifier)
+    }
+}
+
 /// Add Zone
 /// <https://api.cloudflare.com/#zone-create-zone>
 pub struct CreateZone<'a> {
     pub params: CreateZoneParams<'a>,
 }
 impl EndpointSpec for CreateZone<'_> {
-    type JsonResponse = ();
+    type JsonResponse = Option<Zone>;
     type ResponseType = ApiSuccess<Self::JsonResponse>;
 
     fn method(&self) -> Method {
@@ -77,10 +95,17 @@ impl EndpointSpec for CreateZone<'_> {
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct CreateZoneParams<'a> {
     pub name: &'a str,
-    pub account: &'a str,
-    pub jump_start: Option<bool>,
+    pub account: AccountParams<'a>,
     #[serde(rename = "type")]
     pub zone_type: Option<Type>,
+}
+
+/// Cloudflare Accounts Params
+#[serde_with::skip_serializing_none]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq, Default)]
+pub struct AccountParams<'a> {
+    /// Account identifier tag.
+    pub id: Option<&'a str>,
 }
 
 #[derive(Serialize, Clone, Debug, Default)]
@@ -163,7 +188,7 @@ pub struct Zone {
     /// Information about the account the zone belongs to
     pub account: AccountDetails,
     /// The last time proof of ownership was detected and the zone was made active
-    pub activated_on: DateTime<Utc>,
+    pub activated_on: Option<DateTime<Utc>>,
     /// A list of beta features in which the zone is participating
     pub betas: Option<Vec<String>>,
     /// When the zone was created
@@ -214,4 +239,14 @@ pub struct Zone {
 
 // TODO: This should probably be a derive macro
 impl ApiResult for Zone {}
+impl ApiResult for Option<Zone> {}
 impl ApiResult for Vec<Zone> {}
+
+
+#[derive(Deserialize, Debug)]
+pub struct ZoneIdentifier {
+    pub id: Option<String>,
+}
+
+impl ApiResult for ZoneIdentifier {}
+impl ApiResult for Option<ZoneIdentifier> {}
