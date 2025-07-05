@@ -154,8 +154,7 @@ where
         let parsed: Result<ApiSuccess<Endpoint::JsonResponse>, reqwest::Error> = resp.json().await;
         match parsed {
             Ok(success) => Ok(Endpoint::ResponseType::from_json(success)),
-            Err(e) => Err(ApiFailure::Invalid(e))
-            
+            Err(e) => Err(ApiFailure::Invalid(e)),
         }
     } else {
         let parsed: Result<ApiErrors, reqwest::Error> = resp.json().await;

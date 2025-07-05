@@ -242,7 +242,6 @@ impl ApiResult for Zone {}
 impl ApiResult for Option<Zone> {}
 impl ApiResult for Vec<Zone> {}
 
-
 #[derive(Deserialize, Debug)]
 pub struct ZoneIdentifier {
     pub id: Option<String>,

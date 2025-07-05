@@ -35,7 +35,7 @@ impl EndpointSpec for ListDnsRecords<'_> {
 #[derive(Debug)]
 pub struct CreateDnsRecord<'a> {
     pub zone_identifier: &'a str,
-    pub params: CreateDnsRecordParams<'a>,
+    pub params: DnsRecordOperator,
 }
 
 impl EndpointSpec for CreateDnsRecord<'_> {
@@ -53,23 +53,6 @@ impl EndpointSpec for CreateDnsRecord<'_> {
         let body = serde_json::to_string(&self.params).unwrap();
         Some(RequestBody::Json(body))
     }
-}
-
-#[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug)]
-pub struct CreateDnsRecordParams<'a> {
-    /// Time to live for DNS record. Value of 1 is 'automatic'
-    pub ttl: Option<u32>,
-    /// Used with some records like MX and SRV to determine priority.
-    /// If you do not supply a priority for an MX record, a default value of 0 will be set
-    pub priority: Option<u16>,
-    /// Whether the record is receiving the performance and security benefits of Cloudflare
-    pub proxied: Option<bool>,
-    /// DNS record name
-    pub name: &'a str,
-    /// Type of the DNS record that also holds the record value
-    #[serde(flatten)]
-    pub content: DnsContent,
 }
 
 /// Delete DNS Record
@@ -100,7 +83,7 @@ impl EndpointSpec for DeleteDnsRecord<'_> {
 pub struct UpdateDnsRecord<'a> {
     pub zone_identifier: &'a str,
     pub identifier: &'a str,
-    pub params: UpdateDnsRecordParams<'a>,
+    pub params: DnsRecordOperator,
 }
 
 impl EndpointSpec for UpdateDnsRecord<'_> {
@@ -121,20 +104,6 @@ impl EndpointSpec for UpdateDnsRecord<'_> {
         let body = serde_json::to_string(&self.params).unwrap();
         Some(RequestBody::Json(body))
     }
-}
-
-#[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug)]
-pub struct UpdateDnsRecordParams<'a> {
-    /// Time to live for DNS record. Value of 1 is 'automatic'
-    pub ttl: Option<u32>,
-    /// Whether the record is receiving the performance and security benefits of Cloudflare
-    pub proxied: Option<bool>,
-    /// DNS record name
-    pub name: &'a str,
-    /// Type of the DNS record that also holds the record value
-    #[serde(flatten)]
-    pub content: DnsContent,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -213,3 +182,145 @@ pub struct DnsRecord {
 impl ApiResult for DnsRecord {}
 impl ApiResult for Vec<DnsRecord> {}
 impl ApiResult for DeleteDnsRecordResponse {}
+
+/// Batch DNS Records
+/// <https://developers.cloudflare.com/api/resources/dns/subresources/records/methods/batch/>
+#[derive(Debug)]
+pub struct BatchDnsRecords<'a> {
+    pub zone_identifier: &'a str,
+    pub params: BatchDnsRecordsParams,
+}
+
+impl EndpointSpec for BatchDnsRecords<'_> {
+    type JsonResponse = BatchDnsRecordsResponse;
+    type ResponseType = ApiSuccess<Self::JsonResponse>;
+
+    fn method(&self) -> Method {
+        Method::POST
+    }
+    fn path(&self) -> String {
+        format!("zones/{}/dns_records/batch", self.zone_identifier)
+    }
+    #[inline]
+    fn body(&self) -> Option<RequestBody> {
+        let body = serde_json::to_string(&self.params).unwrap();
+        Some(RequestBody::Json(body))
+    }
+}
+
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Default, Clone, Debug)]
+pub struct BatchDnsRecordsParams {
+    pub deletes: Option<Vec<BatchDelete>>,
+    pub patches: Option<Vec<DnsRecordOperator>>,
+    pub posts: Option<Vec<DnsRecordOperator>>,
+    pub puts: Option<Vec<DnsRecordOperator>>,
+}
+
+#[derive(Serialize, Default, Clone, Debug)]
+pub struct BatchDelete {
+    pub id: String,
+}
+
+#[derive(Serialize, Clone, Debug)]
+pub struct DnsRecordOperator {
+    /// Time to live for DNS record. Value of 1 is 'automatic'
+    pub ttl: Option<u32>,
+    /// Whether the record is receiving the performance and security benefits of Cloudflare
+    pub proxied: Option<bool>,
+    /// DNS record name
+    pub name: String,
+    /// Type of the DNS record that also holds the record value
+    #[serde(flatten)]
+    pub content: DnsContent,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct BatchDnsRecordsResponse {
+    pub deletes: Option<Vec<DnsRecord>>,
+    pub patches: Option<Vec<DnsRecord>>,
+    pub posts: Option<Vec<DnsRecord>>,
+    pub puts: Option<Vec<DnsRecord>>,
+}
+
+impl ApiResult for BatchDnsRecordsResponse {}
+
+/// Batch DNS Records
+/// <https://developers.cloudflare.com/api/resources/dns/subresources/records/methods/get/>
+#[derive(Debug)]
+pub struct GetDnsRecord<'a> {
+    pub zone_identifier: &'a str,
+    pub record_identifier: &'a str,
+}
+
+impl EndpointSpec for GetDnsRecord<'_> {
+    type JsonResponse = DnsRecord;
+    type ResponseType = ApiSuccess<Self::JsonResponse>;
+
+    fn method(&self) -> Method {
+        Method::GET
+    }
+    fn path(&self) -> String {
+        format!(
+            "zones/{}/dns_records/{}",
+            self.zone_identifier, self.record_identifier
+        )
+    }
+}
+
+/// Scan DNS Records
+/// <https://developers.cloudflare.com/api/resources/dns/subresources/records/methods/scan/>
+#[derive(Debug)]
+pub struct ScanDnsRecords<'a> {
+    pub zone_identifier: &'a str,
+}
+
+impl EndpointSpec for ScanDnsRecords<'_> {
+    type JsonResponse = Option<ScanDnsRecordsResponse>;
+    type ResponseType = ApiSuccess<Self::JsonResponse>;
+
+    fn method(&self) -> Method {
+        Method::POST
+    }
+    fn path(&self) -> String {
+        format!("zones/{}/dns_records/scan", self.zone_identifier)
+    }
+}
+
+#[derive(Deserialize, Debug)]
+pub struct ScanDnsRecordsResponse {
+    pub recs_added: Option<u32>,
+    pub total_records_parsed: Option<u32>,
+}
+
+impl ApiResult for ScanDnsRecordsResponse {}
+impl ApiResult for Option<ScanDnsRecordsResponse> {}
+
+/// Overwrite DNS Records
+/// <https://developers.cloudflare.com/api/resources/dns/subresources/records/methods/update/>
+#[derive(Debug)]
+pub struct OverwriteDnsRecord<'a> {
+    pub zone_identifier: &'a str,
+    pub record_identifier: &'a str,
+    pub params: DnsRecordOperator,
+}
+
+impl EndpointSpec for OverwriteDnsRecord<'_> {
+    type JsonResponse = DnsRecord;
+    type ResponseType = ApiSuccess<Self::JsonResponse>;
+
+    fn method(&self) -> Method {
+        Method::PUT
+    }
+    fn path(&self) -> String {
+        format!(
+            "zones/{}/dns_records/{}",
+            self.zone_identifier, self.record_identifier
+        )
+    }
+    #[inline]
+    fn body(&self) -> Option<RequestBody> {
+        let body = serde_json::to_string(&self.params).unwrap();
+        Some(RequestBody::Json(body))
+    }
+}
