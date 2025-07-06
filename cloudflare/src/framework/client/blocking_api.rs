@@ -8,6 +8,7 @@ use crate::framework::{auth::AuthClient, Environment};
 use reqwest::blocking::RequestBuilder;
 use std::borrow::Cow;
 use std::net::SocketAddr;
+use crate::framework::client::async_api::Client;
 
 /// Synchronous Cloudflare API client.
 // TODO: Rename to BlockingClient?
@@ -51,6 +52,19 @@ impl HttpApiClient {
             http_client,
         })
     }
+
+    pub fn new_with_client(
+        client: reqwest::blocking::Client,
+        credentials: Credentials,
+        environment: Environment,
+    ) -> Result<Client, crate::framework::Error> {
+        Ok(Client {
+            environment,
+            credentials,
+            http_client: client,
+        })
+    }
+
 
     //noinspection ALL
     // TODO: This should probably just implement request for the Reqwest client itself :)

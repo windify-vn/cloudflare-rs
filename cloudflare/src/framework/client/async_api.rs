@@ -59,6 +59,18 @@ impl Client {
             http_client,
         })
     }
+    pub fn new_with_client(
+        client: reqwest::Client,
+        credentials: Credentials,
+        environment: Environment,
+    ) -> Result<Client, crate::framework::Error> {
+        Ok(Client {
+            environment,
+            credentials,
+            http_client: client,
+        })
+    }
+    
 
     //noinspection RsConstantConditionIf
     /// Issue an API request of the given type.
