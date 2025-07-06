@@ -8,7 +8,6 @@ use crate::framework::{
     Environment,
 };
 use std::borrow::Cow;
-use std::error::Error;
 use std::net::SocketAddr;
 
 /// A Cloudflare API client that makes requests asynchronously.

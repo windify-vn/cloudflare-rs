@@ -245,7 +245,7 @@ pub struct BatchDnsRecordsResponse {
 
 impl ApiResult for BatchDnsRecordsResponse {}
 
-/// Batch DNS Records
+/// Get DNS Record
 /// <https://developers.cloudflare.com/api/resources/dns/subresources/records/methods/get/>
 #[derive(Debug)]
 pub struct GetDnsRecord<'a> {
