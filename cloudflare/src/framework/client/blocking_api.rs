@@ -57,8 +57,8 @@ impl HttpApiClient {
         client: reqwest::blocking::Client,
         credentials: Credentials,
         environment: Environment,
-    ) -> Result<Client, crate::framework::Error> {
-        Ok(Client {
+    ) -> Result<HttpApiClient, crate::framework::Error> {
+        Ok(HttpApiClient {
             environment,
             credentials,
             http_client: client,
