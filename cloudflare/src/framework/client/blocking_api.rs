@@ -8,7 +8,6 @@ use crate::framework::{auth::AuthClient, Environment};
 use reqwest::blocking::RequestBuilder;
 use std::borrow::Cow;
 use std::net::SocketAddr;
-use crate::framework::client::async_api::Client;
 
 /// Synchronous Cloudflare API client.
 // TODO: Rename to BlockingClient?

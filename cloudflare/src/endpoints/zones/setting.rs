@@ -1,33 +1,15 @@
-use http::Method;
-use serde::{Deserialize, Serialize};
 use crate::framework::endpoint::{EndpointSpec, RequestBody};
 use crate::framework::response::{ApiResult, ApiSuccess};
-
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
-#[serde(rename_all = "lowercase")]
-pub enum BooleanValue {
-    On,
-    Off
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
-pub enum TlsVersion {
-    #[serde(rename = "1.0")]
-    TLSv1_0,
-    #[serde(rename = "1.1")]
-    TLSv1_1,
-    #[serde(rename = "1.2")]
-    TLSv1_2,
-    #[serde(rename = "1.3")]
-    TLSv1_3,
-}
+use crate::framework::{BooleanValue, TlsVersion};
+use http::Method;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, strum_macros::AsRefStr)]
 #[serde(tag = "id", rename_all = "snake_case")]
 #[strum(serialize_all = "snake_case")]
 pub enum ZoneSettingValue {
     AlwaysUseHttps { value: BooleanValue },
-    MinTlsVersion { value: TlsVersion }
+    MinTlsVersion { value: TlsVersion },
 }
 
 /// Edit Zone Setting
@@ -84,8 +66,7 @@ impl EndpointSpec for GetZoneSetting<'_> {
     fn path(&self) -> String {
         format!(
             "zones/{}/settings/{}",
-            self.zone_identifier,
-            self.setting_id
+            self.zone_identifier, self.setting_id
         )
     }
 
@@ -95,7 +76,6 @@ impl EndpointSpec for GetZoneSetting<'_> {
         Some(RequestBody::Json(body))
     }
 }
-
 
 #[derive(Deserialize, Debug)]
 pub struct ZoneSettingResponse {

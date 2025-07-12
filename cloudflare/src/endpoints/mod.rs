@@ -7,6 +7,7 @@ pub mod account;
 pub mod ai;
 pub mod argo_tunnel;
 pub mod cfd_tunnel;
+pub mod custom_hostname;
 pub mod dns;
 pub mod load_balancing;
 pub mod r2;

@@ -6,7 +6,7 @@ pub mod client;
 pub mod endpoint;
 pub mod response;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(thiserror::Error, Debug)]
 /// Errors encountered while trying to connect to the Cloudflare API
@@ -22,6 +22,25 @@ pub enum OrderDirection {
     Ascending,
     #[serde(rename = "desc")]
     Descending,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum BooleanValue {
+    On,
+    Off,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+pub enum TlsVersion {
+    #[serde(rename = "1.0")]
+    TLSv1_0,
+    #[serde(rename = "1.1")]
+    TLSv1_1,
+    #[serde(rename = "1.2")]
+    TLSv1_2,
+    #[serde(rename = "1.3")]
+    TLSv1_3,
 }
 
 /// Used as a parameter to API calls that search for a resource (e.g. DNS records).
