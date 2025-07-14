@@ -64,7 +64,6 @@ impl HttpApiClient {
         })
     }
 
-
     //noinspection ALL
     // TODO: This should probably just implement request for the Reqwest client itself :)
     /// Synchronously send a request to the Cloudflare API.

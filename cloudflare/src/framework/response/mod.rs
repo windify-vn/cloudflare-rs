@@ -27,6 +27,7 @@ impl<T> ApiResult for ApiSuccess<T> where T: ApiResult {}
 
 /// Some endpoints return nothing. That's OK.
 impl ApiResult for () {}
+impl ApiResult for serde_json::Value {}
 
 /// A helper trait to avoid trait bounds issues in the clients.
 pub trait ResponseConverter<JsonResponse>: Sized {

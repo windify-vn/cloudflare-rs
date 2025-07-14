@@ -1,8 +1,8 @@
-use http::Method;
-use serde::{Deserialize, Serialize};
 use crate::endpoints::custom_hostname::hostname::CustomHostnameDetails;
 use crate::framework::endpoint::{EndpointSpec, RequestBody};
 use crate::framework::response::{ApiResult, ApiSuccess};
+use http::Method;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
 pub struct DeleteCustomHostnameCertificate<'a> {
@@ -21,7 +21,10 @@ impl EndpointSpec for DeleteCustomHostnameCertificate<'_> {
     fn path(&self) -> String {
         format!(
             "/zones/{}/custom_hostnames/{}/certificate_pack/{}/certificates/{}",
-            self.zone_identifier, self.custom_hostname_id, self.certificate_pack_id, self.certificate_id
+            self.zone_identifier,
+            self.custom_hostname_id,
+            self.certificate_pack_id,
+            self.certificate_id
         )
     }
 }
@@ -51,7 +54,10 @@ impl EndpointSpec for ReplaceCustomHostnameCertificate<'_> {
     fn path(&self) -> String {
         format!(
             "/zones/{}/custom_hostnames/{}/certificate_pack/{}/certificates/{}",
-            self.zone_identifier, self.custom_hostname_id, self.certificate_pack_id, self.certificate_id
+            self.zone_identifier,
+            self.custom_hostname_id,
+            self.certificate_pack_id,
+            self.certificate_id
         )
     }
 
@@ -65,5 +71,5 @@ impl EndpointSpec for ReplaceCustomHostnameCertificate<'_> {
 #[derive(Debug, Serialize, Clone)]
 pub struct ReplaceCustomHostnameCertificateParams {
     pub custom_certificate: String,
-    pub custom_key: String
+    pub custom_key: String,
 }

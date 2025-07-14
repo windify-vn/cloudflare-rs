@@ -9,6 +9,7 @@ pub mod argo_tunnel;
 pub mod cfd_tunnel;
 pub mod custom_hostname;
 pub mod dns;
+pub mod email_routing;
 pub mod load_balancing;
 pub mod r2;
 pub mod workers;

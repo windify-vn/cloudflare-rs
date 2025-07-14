@@ -70,7 +70,6 @@ impl Client {
             http_client: client,
         })
     }
-    
 
     //noinspection RsConstantConditionIf
     /// Issue an API request of the given type.
@@ -169,7 +168,7 @@ where
         //     Ok(success) => Ok(Endpoint::ResponseType::from_json(success)),
         //     Err(e) => {panic!("{}", e)}
         // }
-        
+
         let parsed: Result<ApiSuccess<Endpoint::JsonResponse>, reqwest::Error> = resp.json().await;
         match parsed {
             Ok(success) => Ok(Endpoint::ResponseType::from_json(success)),

@@ -1,7 +1,7 @@
-use http::Method;
-use serde::{Deserialize, Serialize};
 use crate::framework::endpoint::{EndpointSpec, RequestBody};
 use crate::framework::response::{ApiResult, ApiSuccess};
+use http::Method;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
 pub struct DeleteFallbackOrigin<'a> {
@@ -46,7 +46,7 @@ impl EndpointSpec for GetFallbackOrigin<'_> {
 #[derive(Debug)]
 pub struct UpdateFallbackOrigin<'a> {
     pub zone_identifier: &'a str,
-    pub params: UpdateFallbackOriginParams
+    pub params: UpdateFallbackOriginParams,
 }
 
 impl EndpointSpec for UpdateFallbackOrigin<'_> {
@@ -72,7 +72,7 @@ impl EndpointSpec for UpdateFallbackOrigin<'_> {
 
 #[derive(Debug, Serialize, Clone)]
 pub struct UpdateFallbackOriginParams {
-    pub origin: String
+    pub origin: String,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -95,5 +95,5 @@ pub enum FallbackOriginActivationStatus {
     PendingDeletion,
     Active,
     DeploymentTimedOut,
-    DeletionTimedOut
+    DeletionTimedOut,
 }
