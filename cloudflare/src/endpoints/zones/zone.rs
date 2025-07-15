@@ -249,3 +249,29 @@ pub struct ZoneIdentifier {
 
 impl ApiResult for ZoneIdentifier {}
 impl ApiResult for Option<ZoneIdentifier> {}
+
+
+/// Add Zone
+/// <https://developers.cloudflare.com/api/resources/zones/methods/delete/>
+pub struct DeleteZone<'a> {
+    pub zone_identifier: &'a str,
+}
+impl EndpointSpec for DeleteZone<'_> {
+    type JsonResponse = DeleteZoneResponse;
+    type ResponseType = ApiSuccess<Self::JsonResponse>;
+
+    fn method(&self) -> Method {
+        Method::DELETE
+    }
+
+    fn path(&self) -> String {
+        format!("zones/{}", self.zone_identifier)
+    }
+}
+
+#[derive(Deserialize, Debug)]
+pub struct DeleteZoneResponse {
+    pub id: String,
+}
+
+impl ApiResult for DeleteZoneResponse {}
