@@ -128,7 +128,7 @@ pub enum ListZonesOrder {
     Email,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename = "status", rename_all = "lowercase")]
 pub enum Status {
     Active,
